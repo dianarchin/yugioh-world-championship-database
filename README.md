@@ -269,6 +269,7 @@ From analyzing the data:
 - **pgAdmin 4** - Database management interface
 - **Python 3** - Data verification scripts
 - **Bash** - Automation scripts
+- **Tableau** - Data visualization [view here for the completed dashboard] (https://public.tableau.com/app/profile/diana.chin4010/viz/YuGiOhWorldChampionshipStats/Yu-Gi-OhWorldChampionshipDashboard)
 
 ## 🔮 Future Enhancements
 
