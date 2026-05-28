@@ -1,0 +1,280 @@
+-- ============================================
+-- Yu-Gi-Oh Championship Dataset (2004-2025)
+-- ============================================
+
+-- tournaments
+CREATE TABLE tournaments (
+  tournament_id       INT PRIMARY KEY,
+  name                VARCHAR(100) NOT NULL,
+  location            VARCHAR(100),
+  date                DATE,
+  format              VARCHAR(50),
+  format_era          VARCHAR(50),
+  total_participants  INT
+);
+
+-- players
+CREATE TABLE players (
+  player_id           INT PRIMARY KEY,
+  first_name          VARCHAR(50) NOT NULL,
+  last_name           VARCHAR(50) NOT NULL,
+  country             VARCHAR(50),
+  region              VARCHAR(50),
+  notable_achievement VARCHAR(100)
+);
+
+-- decks
+CREATE TABLE decks (
+  deck_id           INT PRIMARY KEY,
+  deck_name         VARCHAR(100) NOT NULL,
+  archetype         VARCHAR(100),
+  format_era        VARCHAR(50),
+  primary_strategy  TEXT,
+  tier              VARCHAR(20)
+);
+
+-- cards
+CREATE TABLE cards (
+  card_id       INT PRIMARY KEY,
+  card_name     VARCHAR(100) NOT NULL,
+  card_type     VARCHAR(50),
+  attribute     VARCHAR(20),
+  level_rank    INT,
+  atk           INT,
+  def           INT,
+  archetype_tag VARCHAR(50),
+  is_banned     BOOLEAN DEFAULT FALSE
+);
+
+-- deck_results (junction: tournaments + decks + players)
+CREATE TABLE deck_results (
+  result_id       INT PRIMARY KEY,
+  tournament_id   INT NOT NULL REFERENCES tournaments(tournament_id),
+  deck_id         INT NOT NULL REFERENCES decks(deck_id),
+  player_id       INT NOT NULL REFERENCES players(player_id),
+  final_record    VARCHAR(10),
+  finish_position VARCHAR(20)
+);
+
+-- deck_cards (junction: decks + cards)
+CREATE TABLE deck_cards (
+  dc_id       INT PRIMARY KEY,
+  deck_id     INT NOT NULL REFERENCES decks(deck_id),
+  card_id     INT NOT NULL REFERENCES cards(card_id),
+  copies_used INT CHECK (copies_used BETWEEN 1 AND 3)
+);
+
+-- ============================================
+-- INSERT DATA
+-- ============================================
+
+INSERT INTO tournaments (tournament_id,name,location,date,format,format_era,total_participants) VALUES
+(1,'Yu-Gi-Oh! World Championship 2004','New York, USA','2004-08-07','Advanced','Classic Era',256),
+(2,'Yu-Gi-Oh! World Championship 2005','Anaheim, USA','2005-08-13','Advanced','Classic Era',512),
+(3,'Yu-Gi-Oh! World Championship 2007','Tokyo, Japan','2007-08-11','Advanced','GX Era',512),
+(4,'Yu-Gi-Oh! World Championship 2008','Orlando, USA','2008-08-09','Advanced','GX Era',600),
+(5,'Yu-Gi-Oh! World Championship 2009','Berlin, Germany','2009-08-15','Advanced','5Ds Era',600),
+(6,'Yu-Gi-Oh! World Championship 2010','Hawaii, USA','2010-08-14','Advanced','5Ds Era',700),
+(7,'Yu-Gi-Oh! World Championship 2011','Tokyo, Japan','2011-08-13','Advanced','5Ds Era',700),
+(8,'Yu-Gi-Oh! World Championship 2012','Nashville, USA','2012-08-11','Advanced','Zexal Era',800),
+(9,'Yu-Gi-Oh! World Championship 2013','Las Vegas, USA','2013-08-10','Advanced','Zexal Era',800),
+(10,'Yu-Gi-Oh! World Championship 2014','Rimini, Italy','2014-08-09','Advanced','Arc-V Era',900),
+(11,'Yu-Gi-Oh! World Championship 2015','Sydney, Australia','2015-08-08','Advanced','Arc-V Era',900),
+(12,'Yu-Gi-Oh! World Championship 2016','Washington D.C., USA','2016-08-06','Advanced','Arc-V Era',1000),
+(13,'Yu-Gi-Oh! World Championship 2017','Tokyo, Japan','2017-08-12','Advanced','VRAINS Era',26),
+(14,'Yu-Gi-Oh! World Championship 2018','Chiba, Japan','2018-08-04','Advanced','VRAINS Era',28),
+(15,'Yu-Gi-Oh! World Championship 2019','Berlin, Germany','2019-08-10','Advanced','VRAINS Era',28),
+(16,'Yu-Gi-Oh! World Championship 2023','Tokyo, Japan','2023-08-05','Advanced','Rush Era',28),
+(17,'Yu-Gi-Oh! World Championship 2024','Seattle, USA','2024-09-07','Advanced','Rush Era',28),
+(18,'Yu-Gi-Oh! World Championship 2025','Paris, France','2025-08-30','Advanced','Rush Era',27);
+
+INSERT INTO players (player_id,first_name,last_name,country,region,notable_achievement) VALUES
+(1,'Yuki','Sakamoto','Japan','Asia','2004 World Champion'),
+(2,'Lenny','Anand','USA','North America','2005 World Champion'),
+(3,'Andreas','Nied','Germany','Europe','2007 World Champion'),
+(4,'Alistar','Albans','USA','North America','2008 World Champion'),
+(5,'Shunsuke','Hara','Japan','Asia','2009 World Champion'),
+(6,'Shuhei','Maruyama','Japan','Asia','2010 World Champion'),
+(7,'Nam','Hyung Woo','South Korea','Asia','2011 World Champion'),
+(8,'Nicky','Lacaille','USA','North America','2012 World Champion'),
+(9,'Hyun Soo','Kim','South Korea','Asia','2013 World Champion'),
+(10,'Satoshi','Kato','Japan','Asia','2014 World Champion'),
+(11,'Sijun','Yu','China','Asia','2015 World Champion'),
+(12,'Dominic','Roberts','Australia','Oceania','2016 World Champion'),
+(13,'Marco','Rios','Spain','Europe','Multiple YCS Top 8'),
+(14,'Billy','Brake','USA','North America','Multiple YCS Winner'),
+(15,'Joe','Giorlando','USA','North America','YCS Champion'),
+(16,'Patrick','Hoban','USA','North America','Multiple YCS Top'),
+(17,'Cesar','Gonzalez','USA','North America','YCS Champion'),
+(18,'Aliena','Baum','Germany','Europe','European Champion'),
+(19,'Faisal','Al-Salem','Saudi Arabia','Middle East','WCQ Regional Champion'),
+(20,'Tobias','Naugk','Germany','Europe','European Qualifier'),
+(21,'Ryo','Tanaka','Japan','Asia','National Champion Japan'),
+(22,'Jong-Woo','Park','South Korea','Asia','Asian Champion'),
+(23,'Chen','Wei','China','Asia','Asian Qualifier'),
+(24,'Alex','Vansant','USA','North America','YCS Top 4'),
+(25,'Scott','Sheahan','USA','North America','YCS Champion'),
+(26,'Enrico','Tessaro','Italy','Europe','European Top 8'),
+(27,'Jessica','Hurley','USA','North America','YCS Finals'),
+(28,'Curtis','Schultz','USA','North America','YCS Top 8'),
+(29,'Taiki','Hayashi','Japan','Asia','WCS Qualifier'),
+(30,'Leo','Brito','Brazil','South America','Latin American Champion'),
+(31,'Ryosuke','Tsujimura','Japan','Asia','2017 World Champion'),
+(32,'Chia Ching','Wang','Chinese Taipei','Asia','2018 World Champion'),
+(33,'Kouki','Kosaka','Japan','Asia','2019 World Champion'),
+(34,'Paulie','Aronson','USA','North America','2023 World Champion - First US Champion'),
+(35,'Ruben','Penaranda','USA','North America','2024 World Champion'),
+(36,'Julien','Kehon','USA','North America','2025 World Champion');
+
+INSERT INTO decks (deck_id,deck_name,archetype,format_era,primary_strategy,tier) VALUES
+(1,'Chaos Control','Chaos','Classic Era','Special Summon BLS & Chaos Emperor Dragon','Tier 1'),
+(2,'Goat Control','Goat Control','Classic Era','Lock with Scapegoat & Thousand-Eyes Restrict','Tier 1'),
+(3,'ToggleSynchro Chaos','Chaos','GX Era','Combo Chaos monsters with Synchro engines','Tier 1'),
+(4,'Gladiator Beasts','Gladiator Beasts','GX Era','Contact Fusion with Gladiator Beast monsters','Tier 1'),
+(5,'Teleport Dark Armed','TeleDAD','5Ds Era','Dark Armed Dragon OTK via Destiny Heroes','Tier 1'),
+(6,'Blackwings','Blackwing','5Ds Era','Swarm and Synchro with Blackwing monsters','Tier 1'),
+(7,'X-Sabers','X-Saber','5Ds Era','Synchro spam and hand disruption with Gottoms','Tier 1'),
+(8,'Lightsworn','Lightsworn','5Ds Era','Mill deck using Judgment Dragon as boss','Tier 1'),
+(9,'Gravekeepers','Gravekeeper','Zexal Era','Royal Tribute + Necrovalley lock','Tier 1'),
+(10,'Wind-Ups','Wind-Up','Zexal Era','Hand loop combo via Wind-Up Carrier Zenmaity','Tier 1'),
+(11,'Inzektors','Inzektor','Zexal Era','Destroy all opponent cards with Inzektor Hornet','Tier 1'),
+(12,'Mermail Atlantean','Mermail','Zexal Era','Water swarm with Mermail Abyssmegalo OTK','Tier 1'),
+(13,'Dragon Rulers','Dragon Ruler','Zexal Era','Banish engine with Dragon Ruler monsters','Tier 1'),
+(14,'Prophecy','Spellbook','Zexal Era','Spellbook of Judgment search engine','Tier 1'),
+(15,'Nekroz','Nekroz','Arc-V Era','Ritual swarm with Nekroz of Trishula hand trap','Tier 1'),
+(16,'Burning Abyss','Burning Abyss','Arc-V Era','Graveyard recursion with Dante engine','Tier 1'),
+(17,'Shaddoll','Shaddoll','Arc-V Era','Flip and Fusion with El Shaddoll Winda','Tier 1'),
+(18,'Qliphort','Qliphort','Arc-V Era','Pendulum scales lockdown with Qliphort Scout','Tier 1'),
+(19,'Kozmo','Kozmo','Arc-V Era','Banish recursion with Kozmo Dark Destroyer','Tier 1'),
+(20,'PePe (Performapal Performage)','Performapal','Arc-V Era','Pendulum loop OTK with Luster Pendulum','Tier 1'),
+(21,'True King Yang Zing Dinosaur','Dinosaur','VRAINS Era','Destroy own cards via True King monsters to extend combos','Tier 1'),
+(22,'Trickstar','Trickstar','VRAINS Era','Burn damage loop using Trickstar Light Stage and Reincarnation','Tier 1'),
+(23,'Salamangreat','Salamangreat','VRAINS Era','Reincarnation Link loop with Salamangreat Balelynx','Tier 1'),
+(24,'Dragon Link','Dragon Link','Rush Era','Dragon monster combo into multiple high-ATK Link monsters','Tier 1'),
+(25,'Fiendsmith Yubel','Fiendsmith','Rush Era','Yubel Spirit of Yugi combined with Fiendsmith engine for OTK','Tier 1'),
+(26,'K9 Vanquish Soul','Vanquish Soul','Rush Era','Attribute-checking aggro with Vanquish Soul Caesar Valius','Tier 1');
+
+INSERT INTO cards (card_id,card_name,card_type,attribute,level_rank,atk,def,archetype_tag,is_banned) VALUES
+(1,'Black Luster Soldier - Envoy of the Beginning','Effect Monster','LIGHT',8,3000,2500,'Chaos',FALSE),
+(2,'Chaos Emperor Dragon - Envoy of the End','Effect Monster','DARK',8,3000,2500,'Chaos',TRUE),
+(3,'Thousand-Eyes Restrict','Fusion Monster','DARK',1,0,0,'Relinquished',TRUE),
+(4,'Scapegoat','Quick-Play Spell',NULL,NULL,NULL,NULL,'N/A',FALSE),
+(5,'Destiny Hero - Malicious','Effect Monster','DARK',6,800,300,'Destiny Hero',FALSE),
+(6,'Dark Armed Dragon','Effect Monster','DARK',7,2800,1000,'N/A',FALSE),
+(7,'Blackwing - Gale the Whirlwind','Effect Monster','DARK',3,1300,400,'Blackwing',FALSE),
+(8,'Blackwing Armor Master','Synchro Monster','DARK',7,2500,1500,'Blackwing',FALSE),
+(9,'Judgment Dragon','Effect Monster','LIGHT',8,3000,2600,'Lightsworn',FALSE),
+(10,'Solar Recharge','Normal Spell',NULL,NULL,NULL,NULL,'Lightsworn',FALSE),
+(11,'Mystical Space Typhoon','Quick-Play Spell',NULL,NULL,NULL,NULL,'N/A',FALSE),
+(12,'Solemn Warning','Counter Trap',NULL,NULL,NULL,NULL,'Solemn',FALSE),
+(13,'Effect Veiler','Effect Monster','LIGHT',1,0,0,'N/A',FALSE),
+(14,'X-Saber Faultroll','Effect Monster','EARTH',6,2400,1500,'X-Saber',FALSE),
+(15,'XX-Saber Gottoms','Synchro Monster','EARTH',9,3100,2600,'X-Saber',FALSE),
+(16,'Gravekeeper''s Spy','Effect Monster','DARK',4,1200,2000,'Gravekeeper',FALSE),
+(17,'Necrovalley','Field Spell',NULL,NULL,NULL,NULL,'Gravekeeper',FALSE),
+(18,'Wind-Up Shark','Effect Monster','WATER',4,1500,1300,'Wind-Up',FALSE),
+(19,'Wind-Up Carrier Zenmaity','Xyz Monster','WIND',3,1500,1500,'Wind-Up',TRUE),
+(20,'Inzektor Hornet','Effect Monster','DARK',3,500,200,'Inzektor',TRUE),
+(21,'Inzektor Dragonfly','Effect Monster','DARK',3,1000,1800,'Inzektor',FALSE),
+(22,'Mermail Abyssmegalo','Effect Monster','WATER',7,2400,1900,'Mermail',FALSE),
+(23,'Atlantean Dragoons','Effect Monster','WATER',4,1800,0,'Atlantean',FALSE),
+(24,'Red-Eyes Darkness Metal Dragon','Effect Monster','DARK',10,2800,2400,'N/A',FALSE),
+(25,'Dragon Ruler of Earthquakes - Redox','Effect Monster','EARTH',7,1600,3000,'Dragon Ruler',TRUE),
+(26,'Spellbook of Judgment','Quick-Play Spell',NULL,NULL,NULL,NULL,'Spellbook',TRUE),
+(27,'High Priestess of Prophecy','Effect Monster','LIGHT',7,2500,2000,'Prophecy',FALSE),
+(28,'Nekroz of Trishula','Ritual Monster','WATER',9,2700,2000,'Nekroz',FALSE),
+(29,'Nekroz of Brionac','Ritual Monster','WATER',6,2400,1400,'Nekroz',FALSE),
+(30,'Dante, Traveler of the Burning Abyss','Xyz Monster','FIRE',3,1000,2500,'Burning Abyss',FALSE),
+(31,'Graff, Malebranche of the Burning Abyss','Effect Monster','DARK',3,1000,600,'Burning Abyss',FALSE),
+(32,'El Shaddoll Winda','Fusion Monster','DARK',5,2200,800,'Shaddoll',FALSE),
+(33,'Shaddoll Fusion','Normal Spell',NULL,NULL,NULL,NULL,'Shaddoll',FALSE),
+(34,'Qliphort Scout','Pendulum Monster','EARTH',5,1000,2800,'Qliphort',TRUE),
+(35,'Saqlifice','Equip Spell',NULL,NULL,NULL,NULL,'Qliphort',FALSE),
+(36,'Kozmo Dark Destroyer','Effect Monster','DARK',9,3000,2500,'Kozmo',FALSE),
+(37,'Kozmotown','Field Spell',NULL,NULL,NULL,NULL,'Kozmo',FALSE),
+(38,'Luster Pendulum, the Dracoslayer','Pendulum Monster','LIGHT',4,1850,0,'Dracoslayer',FALSE),
+(39,'Performage Plushfire','Pendulum Monster','FIRE',4,1000,1000,'Performage',TRUE),
+(40,'Performapal Monkeyboard','Pendulum Monster','EARTH',4,1000,1000,'Performapal',TRUE),
+(41,'Pot of Duality','Normal Spell',NULL,NULL,NULL,NULL,'N/A',FALSE),
+(42,'Mirror Force','Normal Trap',NULL,NULL,NULL,NULL,'N/A',FALSE),
+(43,'Fiendish Chain','Continuous Trap',NULL,NULL,NULL,NULL,'N/A',FALSE),
+(44,'Compulsory Evacuation Device','Normal Trap',NULL,NULL,NULL,NULL,'N/A',FALSE),
+(45,'Fire Formation - Tenki','Continuous Spell',NULL,NULL,NULL,NULL,'Fire Formation',FALSE),
+(46,'Constellar Ptolemy M7','Xyz Monster','LIGHT',6,2700,2000,'Constellar',FALSE),
+(47,'Number 11: Big Eye','Xyz Monster','DARK',7,2600,2000,'Number',FALSE),
+(48,'Mecha Phantom Beast Dracossack','Xyz Monster','WIND',7,2600,2200,'Mecha Phantom Beast',FALSE),
+(49,'Photon Strike Bounzer','Xyz Monster','LIGHT',6,2700,2000,'Photon',FALSE),
+(50,'Creature Swap','Normal Spell',NULL,NULL,NULL,NULL,'N/A',FALSE),
+(51,'Torrential Tribute','Normal Trap',NULL,NULL,NULL,NULL,'N/A',FALSE),
+(52,'Dark Hole','Normal Spell',NULL,NULL,NULL,NULL,'N/A',FALSE),
+(53,'Monster Reborn','Normal Spell',NULL,NULL,NULL,NULL,'N/A',TRUE),
+(54,'Book of Moon','Quick-Play Spell',NULL,NULL,NULL,NULL,'N/A',FALSE),
+(55,'Heavy Storm','Normal Spell',NULL,NULL,NULL,NULL,'N/A',TRUE),
+(56,'Reinforcement of the Army','Normal Spell',NULL,NULL,NULL,NULL,'N/A',FALSE),
+(57,'Gladiator Beast Gyzarus','Fusion Monster','DARK',6,2400,1500,'Gladiator Beast',FALSE),
+(58,'Gladiator Beast Heraklinos','Fusion Monster','FIRE',8,3000,2800,'Gladiator Beast',FALSE),
+(59,'Test Tiger','Effect Monster','EARTH',3,600,300,'Gladiator Beast',FALSE),
+(60,'Dimensional Prison','Normal Trap',NULL,NULL,NULL,NULL,'N/A',FALSE),
+(61,'Ultimate Conductor Tyranno','Effect Monster','LIGHT',10,3500,3200,'Dinosaur',FALSE),
+(62,'Souleating Oviraptor','Effect Monster','DARK',4,1800,500,'Dinosaur',FALSE),
+(63,'True King of All Calamities','Xyz Monster','WIND',9,3000,3000,'True Draco',FALSE),
+(64,'Trickstar Light Stage','Field Spell',NULL,NULL,NULL,NULL,'Trickstar',FALSE),
+(65,'Trickstar Candina','Effect Monster','LIGHT',4,1800,400,'Trickstar',FALSE),
+(66,'Trickstar Reincarnation','Normal Trap',NULL,NULL,NULL,NULL,'Trickstar',FALSE),
+(67,'Salamangreat Almiraj','Link Monster','FIRE',1,0,NULL,'Salamangreat',FALSE),
+(68,'Salamangreat Balelynx','Link Monster','FIRE',1,500,NULL,'Salamangreat',FALSE),
+(69,'Will of the Salamangreat','Normal Spell',NULL,NULL,NULL,NULL,'Salamangreat',FALSE),
+(70,'Guardragon Elpy','Link Monster','DARK',1,800,NULL,'Guardragon',FALSE),
+(71,'Yubel - Spirit of Yugi','Effect Monster','DARK',10,0,0,'Yubel',FALSE),
+(72,'Fiendsmith Sequencer','Effect Monster','DARK',3,1000,200,'Fiendsmith',FALSE);
+
+INSERT INTO deck_results (result_id,tournament_id,deck_id,player_id,final_record,finish_position) VALUES
+(1,1,1,1,'8-0','1st Place'),(2,1,2,3,'6-2','Top 4'),(3,2,2,2,'1st Place','1st Place'),(4,2,1,4,'7-1','Top 4'),
+(5,3,3,3,'1st Place','1st Place'),(6,3,4,5,'6-2','Top 8'),(7,4,4,4,'1st Place','1st Place'),(8,4,5,6,'6-2','Top 4'),
+(9,5,5,5,'1st Place','1st Place'),(10,5,6,7,'7-1','Top 4'),(11,6,6,6,'1st Place','1st Place'),(12,6,7,8,'6-2','Top 4'),
+(13,7,7,7,'1st Place','1st Place'),(14,7,8,9,'5-3','Top 8'),(15,8,9,8,'1st Place','1st Place'),(16,8,10,10,'6-2','Top 4'),
+(17,9,11,9,'1st Place','1st Place'),(18,9,12,11,'7-1','Top 4'),(19,10,13,10,'1st Place','1st Place'),(20,10,14,12,'6-2','Top 4'),
+(21,11,15,11,'1st Place','1st Place'),(22,11,16,13,'7-1','Top 4'),(23,11,17,14,'6-2','Top 8'),(24,12,19,12,'1st Place','1st Place'),
+(25,12,20,15,'7-1','Top 4'),(26,1,1,16,'5-3','Top 8'),(27,2,2,17,'5-3','Top 8'),(28,3,3,18,'5-3','Top 8'),
+(29,4,5,19,'4-4','Top 16'),(30,5,6,20,'5-3','Top 8'),(31,6,7,21,'5-3','Top 8'),(32,7,8,22,'6-2','Top 8'),
+(33,8,9,23,'5-3','Top 16'),(34,9,11,24,'6-2','Top 8'),(35,10,13,25,'5-3','Top 8'),(36,11,15,26,'6-2','Top 8'),
+(37,12,19,27,'5-3','Top 8'),(38,1,2,28,'4-4','Top 16'),(39,2,1,29,'5-3','Top 8'),(40,3,4,30,'4-4','Top 16'),
+(41,4,4,14,'5-3','Top 8'),(42,5,5,22,'4-4','Top 16'),(43,6,6,23,'5-3','Top 8'),(44,7,7,24,'4-4','Top 16'),
+(45,8,10,25,'5-3','Top 8'),(46,9,12,26,'4-4','Top 16'),(47,10,14,27,'5-3','Top 8'),(48,11,16,28,'4-4','Top 16'),
+(49,12,20,29,'5-3','Top 8'),(50,5,8,30,'4-4','Top 16'),(51,6,9,1,'4-4','Top 16'),(52,7,10,2,'3-5','Top 32'),
+(53,8,11,3,'4-4','Top 16'),(54,9,13,4,'3-5','Top 32'),(55,10,15,5,'4-4','Top 16'),(56,11,17,6,'3-5','Top 32'),
+(57,12,18,7,'4-4','Top 16'),(58,10,16,8,'3-5','Top 32'),(59,11,19,9,'4-4','Top 16'),(60,12,20,10,'3-5','Top 32'),
+(61,13,21,31,'1st Place','1st Place'),(62,13,22,14,'6-1','Runner-Up'),(63,13,21,21,'5-2','Top 4'),(64,13,22,29,'5-2','Top 4'),
+(65,14,22,32,'1st Place','1st Place'),(66,14,23,32,'6-1','Runner-Up'),(67,14,21,21,'5-2','Top 4'),(68,14,20,22,'4-3','Top 4'),
+(69,15,23,33,'1st Place','1st Place'),(70,15,23,32,'6-1','Runner-Up'),(71,15,23,22,'5-2','Top 4'),(72,15,21,30,'4-3','Top 4'),
+(73,16,24,34,'1st Place','1st Place'),(74,16,24,30,'6-1','Runner-Up'),(75,16,23,21,'5-2','Top 4'),(76,16,25,19,'4-3','Top 4'),
+(77,17,25,35,'1st Place','1st Place'),(78,17,25,17,'6-1','Runner-Up'),(79,17,25,23,'5-2','Top 4'),(80,17,25,24,'4-3','Top 4'),
+(81,18,26,36,'1st Place','1st Place'),(82,18,15,32,'6-1','Runner-Up'),(83,18,24,29,'5-2','Top 4'),(84,18,23,22,'4-3','Top 4');
+
+INSERT INTO deck_cards (dc_id,deck_id,card_id,copies_used) VALUES
+(1,1,1,3),(2,1,2,3),(3,1,3,1),(4,1,4,3),(5,1,11,3),(6,1,41,3),(7,1,51,3),(8,1,52,2),(9,1,53,2),
+(10,2,4,3),(11,2,3,3),(12,2,11,1),(13,2,41,3),(14,2,54,3),(15,2,51,3),
+(16,3,1,2),(17,3,2,1),(18,3,5,3),(19,3,6,3),(20,3,11,3),(21,3,41,3),
+(22,4,57,3),(23,4,58,1),(24,4,59,3),(25,4,11,3),(26,4,41,3),(27,4,42,3),
+(28,5,5,3),(29,5,6,1),(30,5,11,3),(31,5,12,3),(32,5,13,3),(33,5,41,2),
+(34,6,7,3),(35,6,8,1),(36,6,11,3),(37,6,12,3),(38,6,13,3),
+(39,7,14,3),(40,7,15,1),(41,7,11,3),(42,7,12,3),(43,7,13,3),
+(44,8,9,3),(45,8,10,3),(46,8,11,3),(47,8,12,2),(48,8,41,2),
+(49,9,16,3),(50,9,17,1),(51,9,11,3),(52,9,12,3),(53,9,41,3),
+(54,10,18,3),(55,10,19,1),(56,10,11,3),(57,10,12,3),(58,10,13,3),
+(59,11,20,1),(60,11,21,3),(61,11,11,3),(62,11,12,3),(63,11,41,2),
+(64,12,22,3),(65,12,23,3),(66,12,11,3),(67,12,12,2),(68,12,13,3),
+(69,13,24,3),(70,13,25,3),(71,13,47,1),(72,13,48,1),(73,13,11,3),
+(74,14,26,1),(75,14,27,3),(76,14,11,3),(77,14,41,3),(78,14,12,2),
+(79,15,28,3),(80,15,29,3),(81,15,11,3),(82,15,12,3),(83,15,13,3),
+(84,16,30,3),(85,16,31,3),(86,16,11,3),(87,16,12,3),(88,16,13,3),
+(89,17,32,3),(90,17,33,3),(91,17,11,3),(92,17,12,3),(93,17,13,2),
+(94,18,34,1),(95,18,35,3),(96,18,11,3),(97,18,12,3),(98,18,41,3),
+(99,19,36,3),(100,19,37,1),(101,19,11,3),(102,19,12,3),(103,19,13,3),
+(104,20,38,3),(105,20,39,1),(106,20,40,1),(107,20,11,3),(108,20,12,3),
+(109,21,61,3),(110,21,62,3),(111,21,63,1),(112,21,11,3),(113,21,12,3),(114,21,13,3),
+(115,22,64,1),(116,22,65,3),(117,22,66,3),(118,22,11,3),(119,22,12,2),(120,22,41,3),
+(121,23,67,3),(122,23,68,3),(123,23,69,3),(124,23,11,3),(125,23,12,3),(126,23,13,2),
+(127,24,70,3),(128,24,24,3),(129,24,11,3),(130,24,12,3),(131,24,13,3),
+(132,25,71,3),(133,25,72,3),(134,25,11,3),(135,25,12,3),(136,25,13,2),
+(137,26,11,3),(138,26,12,3),(139,26,13,3),(140,26,41,3),(141,26,43,3),(142,26,44,2);
